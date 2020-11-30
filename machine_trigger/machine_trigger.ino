@@ -4,7 +4,7 @@
 #define motionPin 3
 
 #define relay1Pin 5
-#define relay2Pin 6
+#define relay2Pin 11
 
 boolean sensorState = true;
 boolean sensor = false;
@@ -22,26 +22,33 @@ void setup() {
   pinMode(relay1Pin, OUTPUT);
   pinMode(relay2Pin, OUTPUT);
   
-  digitalWrite(relay1Pin, HIGH);
-  digitalWrite(relay2Pin, HIGH);
+  digitalWrite(relay1Pin, LOW);
+  digitalWrite(relay2Pin, LOW);
+
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop() {
   motionButton = digitalRead(motionPin);  
-  if (motionButton && millis() - motionTimer > 250) {
+  if (!motionButton && millis() - motionTimer > 300) {
     motionTimer = millis();
-    motionState = !motionState;
+    motionState = !motionState; 
   }
-
-  if (motionState) {
-    proceedMotion();
+  
+  if (motionState) { 
+    proceedMotion(); 
+    digitalWrite(LED_BUILTIN, HIGH);
+  } else {
+    digitalWrite(relay1Pin, LOW);
+    digitalWrite(relay2Pin, LOW);
+    digitalWrite(LED_BUILTIN, LOW);    
   }
 }
 
 void proceedMotion() {
   sensor = digitalRead(sensorPin);  
 
-  if (sensor && millis() - sensorTimer > 500) {
+  if (sensor && millis() - sensorTimer > 800) {
     sensorState = !sensorState;
     sensorTimer = millis();
 
